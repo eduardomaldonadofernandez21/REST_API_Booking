@@ -1,12 +1,21 @@
 package com.devgucci.database.controllers;
 
+import com.devgucci.database.TestDataUtil;
+import com.devgucci.database.domain.dto.BookDto;
+import com.devgucci.database.services.BookService;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 @SpringBootTest
 @ExtendWith(SpringExtension.class)
@@ -16,5 +25,44 @@ public class BooksControllerIntegrationTests {
 
     private MockMvc mockMvc;
 
+    private ObjectMapper objectMapper;
 
+    private BookService bookService;
+
+    @Autowired
+    public BooksControllerIntegrationTests(MockMvc mockMvc, BookService bookService) {
+        this.mockMvc = mockMvc;
+        this.bookService = bookService;
+        this.objectMapper = new ObjectMapper();
+    }
+
+    @Test
+    public void testThatCreateBookReturnsHttpStatus201Created() throws Exception {
+        BookDto testBookA = TestDataUtil.createTestBookDtoA(null);
+        String bookJson = objectMapper.writeValueAsString(testBookA);
+
+        mockMvc.perform(
+                MockMvcRequestBuilders.put("/books/978-1-2345-6789-0")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(bookJson)
+        ).andExpect(
+                MockMvcResultMatchers.status().isCreated()
+        );
+    }
+
+    @Test
+    public void testThatCreateBookReturnsCreateBook() throws Exception {
+        BookDto testBookA = TestDataUtil.createTestBookDtoA(null);
+        String createBookJson = objectMapper.writeValueAsString(testBookA);
+
+        mockMvc.perform(
+                MockMvcRequestBuilders.put("/books/978-1-2345-6789-0")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(createBookJson)
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$.isbn").value("978-1-2345-6789-0")
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$.title").value("The Shadow in the Attic")
+        );
+    }
 }
