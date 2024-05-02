@@ -42,6 +42,11 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
+    public Optional<BookEntity> findOne(String isbn) {
+        return bookRepository.findById(isbn);
+    }
+
+    @Override
     public void delete(String isbn) {
 
     }
@@ -56,9 +61,5 @@ public class BookServiceImpl implements BookService {
         return false;
     }
 
-    @Override
-    public Optional<BookEntity> findOne(String isbn) {
-        return Optional.empty();
-    }
 
 }
