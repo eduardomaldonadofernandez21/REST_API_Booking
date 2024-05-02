@@ -1,6 +1,7 @@
 package com.devgucci.database.controllers;
 
 import com.devgucci.database.TestDataUtil;
+import com.devgucci.database.domain.dto.AuthorDto;
 import com.devgucci.database.domain.entities.AuthorEntity;
 import com.devgucci.database.services.AuthorService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -48,6 +49,25 @@ public class AuthorControllerIntegrationTests {
                         .content(authorJson)
         ).andExpect(
                 MockMvcResultMatchers.status().isCreated()
+        );
+    }
+
+    @Test
+    public void testThatCreateAuthorSuccessfullyReturnsSavedAuthor() throws Exception {
+        AuthorDto testAuthorA = TestDataUtil.createTestAuthorDtoA();
+        testAuthorA.setId(null);
+        String authorJson = objectMapper.writeValueAsString(testAuthorA);
+
+        mockMvc.perform(
+                MockMvcRequestBuilders.post("/authors")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(authorJson)
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$.id").isNumber()
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$.name").value("Abigail Rose")
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$.age").value(80)
         );
     }
 }
