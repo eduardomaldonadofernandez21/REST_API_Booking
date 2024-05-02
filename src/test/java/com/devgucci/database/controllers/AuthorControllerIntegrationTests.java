@@ -73,6 +73,14 @@ public class AuthorControllerIntegrationTests {
     }
 
     @Test
+    public void testThatListAuthorsReturnsHttpStatus200() throws Exception {
+        mockMvc.perform(
+          MockMvcRequestBuilders.get("/authors")
+                  .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(MockMvcResultMatchers.status().isOk());
+    }
+
+    @Test
     public void testThatListAuthorsReturnsListOfAuthors() throws Exception {
         AuthorEntity testAuthorEntityA = TestDataUtil.createTestAuthorEntityA();
         authorService.save(testAuthorEntityA);
