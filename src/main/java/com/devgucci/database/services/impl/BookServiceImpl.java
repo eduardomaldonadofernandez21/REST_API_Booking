@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @Service
 public class BookServiceImpl implements BookService {
@@ -25,10 +27,18 @@ public class BookServiceImpl implements BookService {
         return bookRepository.save(book);
     }
 
+    @Override
+    public List<BookEntity> findAll() {
+        return StreamSupport
+                .stream(
+                        bookRepository.findAll().spliterator(),
+                        false)
+                .collect(Collectors.toList());
+    }
 
     @Override
     public Page<BookEntity> findAll(Pageable pageable) {
-        return null;
+        return bookRepository.findAll(pageable);
     }
 
     @Override
@@ -51,8 +61,4 @@ public class BookServiceImpl implements BookService {
         return Optional.empty();
     }
 
-    @Override
-    public List<BookEntity> findAll() {
-        return List.of();
-    }
 }
