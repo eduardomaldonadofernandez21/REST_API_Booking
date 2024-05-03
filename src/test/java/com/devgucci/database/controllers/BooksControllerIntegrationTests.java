@@ -2,6 +2,7 @@ package com.devgucci.database.controllers;
 
 import com.devgucci.database.TestDataUtil;
 import com.devgucci.database.domain.dto.BookDto;
+import com.devgucci.database.domain.entities.AuthorEntity;
 import com.devgucci.database.domain.entities.BookEntity;
 import com.devgucci.database.services.BookService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -197,6 +198,25 @@ public class BooksControllerIntegrationTests {
                 MockMvcResultMatchers.jsonPath("$.title").value("UPDATED")
         );
 
+    }
+
+    @Test
+    public void testThatDeleteNonExistingBookReturnsHttpStatus204NoContent() throws Exception {
+        mockMvc.perform(
+          MockMvcRequestBuilders.delete("/books/kjsbdfjdfsk")
+                  .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(MockMvcResultMatchers.status().isNoContent());
+    }
+
+    @Test
+    public void testThatDeleteExistingBookReturnsHttpStatus204NoContent() throws Exception {
+        BookEntity testBookEntityA = TestDataUtil.createTestBookEntityA(null);
+        bookService.createUpdateBook(testBookEntityA.getIsbn(), testBookEntityA);
+
+        mockMvc.perform(
+                MockMvcRequestBuilders.delete("/books/" + testBookEntityA.getIsbn())
+                        .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(MockMvcResultMatchers.status().isNoContent());
     }
 
 }
