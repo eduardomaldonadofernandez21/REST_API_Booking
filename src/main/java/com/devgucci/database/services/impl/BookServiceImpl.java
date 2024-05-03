@@ -53,12 +53,17 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public BookEntity partialUpdate(String isbn, BookEntity bookEntity) {
-        return null;
+        bookEntity.setIsbn(isbn);
+
+        return bookRepository.findById(isbn).map(existingBook -> {
+           Optional.ofNullable(bookEntity.getTitle()).ifPresent(existingBook::setTitle);
+           return bookRepository.save(existingBook);
+        }).orElseThrow(() -> new RuntimeException("Book does no exist"));
     }
 
     @Override
     public boolean isExists(String isbn) {
-        return false;
+        return bookRepository.existsById(isbn);
     }
 
 
