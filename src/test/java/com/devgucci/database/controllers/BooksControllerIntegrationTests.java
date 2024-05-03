@@ -68,6 +68,49 @@ public class BooksControllerIntegrationTests {
     }
 
     @Test
+    public void testThatUpdateBookReturnsHttpStatus201Ok() throws Exception {
+        BookEntity testBookEntityA = TestDataUtil.createTestBookEntityA(null);
+        BookEntity savedBookEntity = bookService.createUpdateBook(
+                testBookEntityA.getIsbn(), testBookEntityA
+        );
+
+        BookDto testBookA = TestDataUtil.createTestBookDtoA(null);
+        testBookA.setIsbn(savedBookEntity.getIsbn());
+        String bookJson = objectMapper.writeValueAsString(testBookA);
+
+        mockMvc.perform(
+                MockMvcRequestBuilders.put("/books/" + savedBookEntity.getIsbn())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(bookJson)
+        ).andExpect(
+                MockMvcResultMatchers.status().isCreated()
+        );
+    }
+
+    @Test
+    public void testThatUpdateBookReturnsUpdatedBook() throws Exception {
+        BookEntity testBookEntityA = TestDataUtil.createTestBookEntityA(null);
+        BookEntity savedBookEntity = bookService.createUpdateBook(
+                testBookEntityA.getIsbn(), testBookEntityA
+        );
+
+        BookDto testBookA = TestDataUtil.createTestBookDtoA(null);
+        testBookA.setIsbn(savedBookEntity.getIsbn());
+        testBookA.setTitle("UPDATED");
+        String bookJson = objectMapper.writeValueAsString(testBookA);
+
+        mockMvc.perform(
+                MockMvcRequestBuilders.put("/books/" + savedBookEntity.getIsbn() )
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(bookJson)
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$.isbn").value("978-1-2345-6789-0")
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$.title").value("UPDATED")
+        );
+    }
+
+    @Test
     public void testThatListBooksReturnsHttpStatus200Ok() throws Exception {
         mockMvc.perform(
                 MockMvcRequestBuilders.get("/books")
