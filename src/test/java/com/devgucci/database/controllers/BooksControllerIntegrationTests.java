@@ -68,7 +68,7 @@ public class BooksControllerIntegrationTests {
     }
 
     @Test
-    public void testThatUpdateBookReturnsHttpStatus201Ok() throws Exception {
+    public void testThatUpdateBookReturnsHttpStatus200Ok() throws Exception {
         BookEntity testBookEntityA = TestDataUtil.createTestBookEntityA(null);
         BookEntity savedBookEntity = bookService.createUpdateBook(
                 testBookEntityA.getIsbn(), testBookEntityA
@@ -83,7 +83,7 @@ public class BooksControllerIntegrationTests {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(bookJson)
         ).andExpect(
-                MockMvcResultMatchers.status().isCreated()
+                MockMvcResultMatchers.status().isOk()
         );
     }
 
